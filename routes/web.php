@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TodosController;
+use App\Http\Livewire\Todo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,12 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', fn () => view('welcome'));
+
+Route::middleware('auth')->group(function () {
+    Route::get('dashboard', fn () => view('dashboard'))->name('dashboard');
+
+    Route::get('livewire-todos', Todo::class);
+
+    Route::get('todos', [TodosController::class, 'index']);
+    Route::post('todos', [TodosController::class, 'store']);
+    Route::get('todos/{id}/check', [TodosController::class, 'check']);
+    Route::get('todos/{id}/delete', [TodosController::class, 'destroy']);
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
